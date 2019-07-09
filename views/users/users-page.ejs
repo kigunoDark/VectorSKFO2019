@@ -17,11 +17,17 @@
   <% if(roleId === 4 ) { %>
     <th class="center">Пригласить</th>
   <% } %>
+  <% if(roleId === 1 || roleId === 2) { %>
+    <th class="center"> Принять </th>
+    <th class="center"> Отклонить </th>
+    <th class="ceenter"> Удалить </th> 
+  <% } %>
 </tr>
 </thead>
 
 <tbody class="all-users">
 <% for (let user of users ) { %>
+<% if (user.s_type != "Заявка отклонена.") { %>
 <tr class="<%if(user.id === activeUserId) { %> accepted-user <% }%>">
 <td><%= user.surname %></td>
 <td><%= user.name%></td>
@@ -43,8 +49,34 @@
     <input type="hidden" value="<%= user.id %>" name="teamMateId">
     <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button>
   </form>
+<% } else if (roleId === 1 || roleId === 2){  %>
+ <form class="adminInt" id="delete-teammate" action="/acceptMember" method="POST"> 
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <input type="hidden" value="<%= user.id %>" name="teamMateId">
+    <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button>
+  </form>
+<% } %> 
+<% if(roleId === 1 || roleId === 2) { %>
+    <td  class="center">
+      <form action="/adminDecline-member" method="POST"> 
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+        <input type="hidden" name="memberId" value="<%= user.id %>">
+        <input type="hidden" name="memberStatus" value="Заявка отклонена.">
+        <button type="submint"  class="teamAdd">  <i class=" fas fa-user-minus"></i> </button>
+      </form>
+    </td>
+    <td class="center">
+      <form  action="/admindel-member" method="POST">
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+        <input type="hidden" name="memberId" value="<%= user.id %>">
+        <button type="submint"  class="teamAdd">  <i class=" fas fa-minus-circle"></i> </button>
+      </form>
+    </td>
 <% } %>
 </td>
+</tr>
+<% } %>
+
 <% } %>
 </table>
 

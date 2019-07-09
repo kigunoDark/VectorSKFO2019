@@ -23,9 +23,8 @@ $(function () {
 });
 socket.on('addRequest', function(ms){
     //  $('.fa-envelope ').append(ms);
-    //  $('.fa-envelope').addClass('acceptedMs');  
-    $('.rethink').attr("action", '/teams-page');
-    $('.rethink').attr("method", 'GET');
-    $('.fa-check-circle').addClass('far fa-thumbs-up').removeClass('fa-check-circle');  
+    //  $('.fa-envelope').addClass('acceptedMs'); 
+    location.reload(); 
+    
 });
 });

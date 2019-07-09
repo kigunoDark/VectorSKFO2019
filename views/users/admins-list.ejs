@@ -1,6 +1,6 @@
 <%- include('../layouts/navbar.ejs')%>
 <main class="users-page"> 
-<% if (admins.length > 0 ) { %>
+<% if (admins.length > 1 ) { %>
 <div class="container"> 
     <table class="team-table highlight responsive-table">
         <thead>
@@ -10,20 +10,44 @@
         <th>Отчество</th>
         <th>Должность</th>
         <th>Город</th>
+        <th class="center"> Удалить </th>
         </tr>
         </thead>
         <tbody class="all-users">
         <% for (let admin of admins ) { %>
+        <% if(admin.roleId != 1 ) { %>
         <tr  class="<%if(admin.id === userId) { %> accepted-user <% }%>">
             <td><%= admin.surname %></td>
             <td><%= admin.name%></td>
             <td><%= admin.secondname%></td>
             <td><%= admin.position %> </td>
             <td><%= admin.city %> </td>
+             <td class="center">            
+                <a href="#modal2" class="getId modal-trigger"><i class="userAdd fas fa-minus-circle"></i><span class="her"><%= admin.id %></span></a>
+            </td>
+            
         </tr>
+        <% } %>
+          <div id="modal2" class="modal">
+                <h5 class="modal-close cross">&#10005</h5>
+                <div class="modal-content">
+                    <h6 class="regTitle">Удаление администратора.</h6>
+                        <p> Вы действительно хотите удалить действующего администратора?</p>
+                    </div>
+                        <div class="modal-footer">
+                        <form  id="deleteAdmin" action="/delete-admin" method="POST">
+                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                            <input type="hidden" value="" class="postId" name="adminId">
+                             <a href="javascript:{}"  class="requesty modal-close waves-effect waves-green btn-flat" onclick="document.getElementById('deleteAdmin').submit();">Удалить</a>
+                        </form>
+                        </div>
+                    </div> 
+                </div>   
+            </tr>
        <% } %>
         </tbody>
     </table>
+      
 
     <% if( roleId === 1 ) { %>
     <form action="/admin/add-teammate">
@@ -45,10 +69,32 @@
     </div>
  
 <% } %>
-
 </div>
-<%} else  { %>
-    <h1> Не существует ни одного администратора, что-то случилось обратитесь в техподдержку </h1>
+
+<%} else { %>
+     <div class="container  teams-card">
+        <h3 class="center title1"> В списке нет команд </h3>
+    <form action="/admin/add-teammate">
+        <button class="right loginButton modal-trigger"   data-target="modal3"   type="submit">Добавить</button>
+    </form>
+      <div id="modal3" class="modal">
+      <h5 class="modal-close cross">&#10005</h5>
+        <div class="modal-content">
+            <h4 class="regTitle">Добавить администратора</h4>
+            <div class="row">
+                <div class="input-field col s12">
+                    <%- include('./add-admin.ejs')%>    
+                </div>
+            </div>
+        </div>
+            <div class="modal-footer">
+            <a href="javascript:{}" onclick="document.getElementById('add-admin').submit();" style="color:#f2d243;"  class="modal-close waves-effect waves-green btn-flat">Принять</a>
+        </div>
+    </div>
+</div>
+
+    
+
 <% } %>
 </main>
 

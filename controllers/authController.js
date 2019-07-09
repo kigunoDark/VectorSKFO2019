@@ -41,8 +41,13 @@ exports.postLogin = (req, res) => {
            
                return req.session.save(err=>
                 {
-                    console.log(err);
-                    return res.redirect('/profile');
+                    if(err)
+                    {
+                        console.log(err);
+                    } else {
+                        return res.redirect('/profile');
+                    }
+                    
                 })
               
             } else {

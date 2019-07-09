@@ -11,10 +11,8 @@
             <p class=" team-title  profile-text"><%= user.name %> <%= user.surname %> </p>
             <p class="team-desctiption">  <span style="color:black;"> Должность: </span><%= user.position %></p> 
             <p class="team-desctiption"> <span style="color:black;"> Статус:</span> <% if (user.roleId === 5) { %> Участник
-            <%} else if (user.roleId === 4 ) {%>
-            Лидер команды <% } else if(user.roleId === 3) { %> Ментор
-            <%}%></p>
-            <p class=" <%if(user.status === "Заявка рассматривается" ) { %> in-process <% } else if (user.status === "Заявка принята") { %> accepted-user <% } else if (user.status === "Заявка отклонена") { %> rejected <% } %> "> <span style="color:black;"> Статус заявки: </span><%=user.status%></p>
+            <%} else if (user.roleId === 4 ) {%> Лидер команды <% } else if(user.roleId === 3) { %> Ментор<%}%></p>
+            <p class=" <% if (user.s_type === "Заявка принята") { %> accepted-user <% } else if (user.status === "Заявка отклонена") { %> rejected <% } %> "> <span style="color:black;"> Статус заявки: </span><%=user.s_type%></p>
             <p class="additional-info "> 
                </div>
         </div>

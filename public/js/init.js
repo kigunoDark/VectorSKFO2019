@@ -90,6 +90,18 @@ $(document).ready(function(){
   $('.datepicker').datepicker();
 });
 
+$('.getId').click(function(){
+  var link = $(".getId");
+  console.log(link);
+  console.log(link.children('.her').text());
+  var adminId = $('.her').text();
+  // console.log(adminId);
+  // $('.postId').val(adminId);
+  // const her = $('.postId').val();
+  // console.log(her);
+  
+})
+
 setTimeout( function(){ 
 $('.smile').addClass('fa-grin-alt').removeClass('fa-frown-open');  
 }  , 2000 );

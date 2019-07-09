@@ -1085,15 +1085,73 @@ exports.postAcceptRequest = (req, res) => {
             email: email
             
         })
-        .catch(err => {
-            console.log(err);
-        })
     })
     .then(() => {
-        console.log('Admin have been created!');
         res.redirect('/admins-list');
     })    
     .catch(err => {
         console.log(err);
     })
  }
+
+ exports.postDeleteAdmin = (req, res) => {
+     const adminId = req.body.adminId;
+     console.log( "This is adminId " + adminId);
+     User.destroy({where: {
+         id: adminId
+     }})
+     .then(()=>{
+         res.redirect("/admins-list");
+     })
+     .catch(err => {
+        if(err) {
+            console.log(err);
+        }else{
+           console.log("Admin has deleted");
+        };
+    })
+}
+
+exports.adminDeleteMember = (req, res) => {
+    const memberId = req.body.memberId;
+    User.destroy({ where: {
+        id: memberId
+    }})
+    .then(() => {
+        res.redirect('/users-list');
+    })
+    .catch(err => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("You have deleted the user as an admin!");
+        }
+    })
+}
+
+exports.adminDeclineMember = (req, res ) => {
+    const memberId = req.body.memberId;
+    const memberSt = req.body.memberStatus;
+ 
+    User.findById(memberId)
+    .then(user=>{
+        user.update({
+            s_type:memberSt
+        })
+        return user.save();
+    })
+    .then(() => {
+        res.redirect("/users-list");
+    })
+    .catch(err => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("User has been declined by Admin");
+        }
+    })
+}
+
+exports.adminAcceptMember = (req, res) => {
+    consoele.log(express.session.MemoryStore());
+} 

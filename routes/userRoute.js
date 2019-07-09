@@ -19,6 +19,10 @@ router.get('/admins-list', isAuth, userControll.getAdmins);
 
 
 router.post('/decline-all', isAuth, userControll.declineAllRequests);
+router.post('/admindel-member', isAuth, userControll.adminDeleteMember);
+router.post('/adminDecline-member', isAuth, userControll.adminDeclineMember);
+router.post('/adminAccept-member', isAuth, userControll.adminAcceptMember);
+router.post('/delete-admin', isAuth, userControll.postDeleteAdmin);
 router.post('/add-admin', isAuth, userControll.postAddAmin);
 router.post('/delete-team', isAuth, userControll.postDeleteTeam);
 router.post('/edit-team', isAuth, userControll.postEditTeam);
