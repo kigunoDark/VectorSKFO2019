@@ -216,7 +216,7 @@ exports.getMainPage = async (req,res) => {
         const teamId = req.session.user.teamId;
         
     try {
-      const user = await User.findById(userId)
+      const user = await User.findByPk(userId)
          
             res.render('./users/profile-page',{
                 userId:userId,
@@ -257,7 +257,7 @@ exports.getEditUser = async (req, res, next) => {
         return res.redirect('/');
     }
    try {
-   const user = await User.findById(userId)
+   const user = await User.findByPk(userId)
         if(!user)
         {
             return res.redirect('/')
@@ -332,7 +332,7 @@ exports.postEditUser = (req, res, next) => {
 
         });
     }
-   User.findById(userId)
+   User.findByPk(userId)
 
    .then(user=>{
        user.name = updatedName;
@@ -388,7 +388,7 @@ exports.getEditTeam = async (req, res) => {
 
     try { 
 
-    const team = await Team.findById(teamId)
+    const team = await Team.findByPk(teamId)
 
         if(!team)
         {
@@ -460,7 +460,7 @@ exports.postEditTeam = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-   Team.findById(teamId)
+   Team.findByPk(teamId)
    .then(team=>{
        team.t_name = t_name;
        team.t_social = t_social;
@@ -489,7 +489,7 @@ exports.getUser = async (req,res, next)  => {
    const id = req.params.id;
 
    try {
-   const user = await User.findById(id)
+   const user = await User.findByPk(id)
 
         if(!user){
             res.redirect('/');
@@ -519,7 +519,7 @@ exports.getAddTeamPage =  async (req, res ) => {
 
     try {
         
-        const user = await User.findById(userId)
+        const user = await User.findByPk(userId)
 
             res.render("./users/add-team", {
                 pageTitle: "Создать команду",
@@ -645,7 +645,7 @@ exports.postAddTeam = (req, res) => {
         console.log('Это иди пользователя ' + userId);
         if(team.userId === userId)
         {
-            User.findById(userId)
+            User.findByPk(userId)
             .then( user => {
                 if(user)
                 {
@@ -707,7 +707,7 @@ exports.getUserDetails = async (req,res) => {
     const activeUserId = req.session.user.id;
     const roleId = req.session.user.roleId;
 
-    const user = await User.findById(userId)
+    const user = await User.findByPk(userId)
     
         res.render('./users/user-details',
         { 
@@ -760,7 +760,7 @@ exports.postAddRequest = (req, res) => {
 
    const userEmail = req.session.user.email; 
    
-   User.findById(userId)
+   User.findByPk(userId)
    .then(user => {
        user.teamStatus = "Заявка подана";
        return user.save()
@@ -808,7 +808,7 @@ exports.postCancelRequest = (req, res) => {
     let userId = req.session.user.id;
     const userEmail = req.session.user.email;
     
-    User.findById(userId)
+    User.findByPk(userId)
     .then(user => {
         user.teamId = 0;
         user.teamStatus = 'Команды нет'
@@ -899,7 +899,7 @@ exports.postAcceptRequest = (req, res) => {
     const teamId = req.body.teamId;
     const teamMateEmail = req.body.teamMateEmail;
    
-    User.findById(teamMateId)
+    User.findByPk(teamMateId)
     .then(user=>{
        user.teamId = teamId;
        user.teamStatus = "Принят"
@@ -928,7 +928,7 @@ exports.postAcceptRequest = (req, res) => {
     const teamMateId = req.params.teamMateId;
     const teamMateEmail = req.body.teamMateEmail;
     console.log("THIS is a teamMateId");
-    User.findById(teamMateId)
+    User.findByPk(teamMateId)
     .then(user => {
         user.teamId = 0;
         user.teamStatus = 'Команды нет';
@@ -986,7 +986,7 @@ exports.postAcceptRequest = (req, res) => {
         
         const userEmail = req.session.user.email; 
         const userId = req.session.user.id;
-        User.findById(userId)
+        User.findByPk(userId)
         .then(user => {
             user.teamStatus = "Стать ментором";
             return user.save()
@@ -1133,7 +1133,7 @@ exports.adminDeclineMember = (req, res ) => {
     const memberId = req.body.memberId;
     const memberSt = req.body.memberStatus;
  
-    User.findById(memberId)
+    User.findByPk(memberId)
     .then(user=>{
         user.update({
             s_type:memberSt

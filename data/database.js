@@ -8,7 +8,9 @@ const sequelize = new Sequelize('testdatabase', 'root', '1995op1995',
         max:5,
         min:0,
         idle: 200
-    }
+    },
+    operatorsAliases: false
+    
 });
 
 module.exports = sequelize;

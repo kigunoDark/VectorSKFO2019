@@ -26,7 +26,7 @@ const transporter = nodemailer.createTransport(sendgridTransport({
 
 exports.getTeammate = (req,res, next) => {
    const teamId = req.params.id;
-   TeamMate.findById(teamId)
+   TeamMate.findByPk(teamId)
    .then(teammate => {
     res.render('./admin/teammate-details',
     { 
@@ -55,7 +55,7 @@ exports.getEditTeammate = (req, res, next) => {
 
     const teamId = req.params.id;
 
-    TeamMate.findById(teamId)
+    TeamMate.findByPk(teamId)
     .then(teammate => {
         if(!teammate)
         {
@@ -129,7 +129,7 @@ exports.postEditTemmmate = (req, res, next) => {
             validationErrors: errors.array()
         });
     }
-   TeamMate.findById(teamId)
+   TeamMate.findByPk(teamId)
 
    .then(teammate=>{
        teammate.surname = updatedMateSurname;
@@ -160,7 +160,7 @@ exports.postEditTemmmate = (req, res, next) => {
 exports.getUser = (req,res, next)  => {
     const id = req.params.id;
 
-    User.findById(id)
+    User.findByPk(id)
     .then(user => {
         if(!user){
             res.redirect('/');
@@ -436,7 +436,7 @@ exports.postDeleteTeamMate = (req, res) => {
     console.log(page);
 
  
-    TeamMate.findById(id)
+    TeamMate.findByPk(id)
     .then(teammate => {
         if(!teammate)
         {
@@ -454,7 +454,7 @@ exports.postDeleteTeamMate = (req, res) => {
 
 exports.postDeleteAdmin = (req,res) => {
     const id = req.body.adminId;
-    Admin.findById(id)
+    Admin.findByPk(id)
     .then( admin => {
         return admin.destroy();
     })
@@ -619,7 +619,7 @@ exports.getAcceptedTeam = (req, res, next) => {
 
 exports.postDeleteAceepted = (req, res) => {
     const id = req.body.teamMateId;
-    Accepted.findById(id)
+    Accepted.findByPk(id)
     .then(teammate => {
         if(!teammate)
         {

@@ -72,7 +72,7 @@ app.use((req,res,next) => {
       
         const id = req.session.user.id;
         
-         User.findById(id)
+         User.findByPk(id)
             .then(user => {
     
                 res.locals.userId = user.id;
@@ -142,12 +142,12 @@ sequelize
                 console.log(reqTeamMateId);
                 const reqTeamId = newRequest.reqTeamId;
                 const ms = "  1";
-                User.findById(reqTeamMateId)
+                User.findByPk(reqTeamMateId)
                 .then(user => {
                     console.log(user.name);
                     
                 });
-                User.findById(reqTeamMateId)
+                User.findByPk(reqTeamMateId)
                 .then(user => {
                     if(user)
                     {
