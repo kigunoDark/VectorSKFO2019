@@ -7,7 +7,6 @@
  <h1 class="title2 center"> <span class="owncolor">Список </span> команд  </h1>
         <div class="row">
             <% for(let team of teams)  { %>
-
                 <div class="col s12 m3">
                     <div class="card">
                         <div class="card-image">
@@ -17,8 +16,7 @@
                         <div class="card-action">
                              <div class="inline">
                              
-                                <a href="/team-details/<%=team.id%>"><i class="right more fas fa-info-circle"></i></a>
-                                
+                                <a href="/team-details/<%=team.id%>"><i class="right more fas fa-info-circle"></i></a>                          
                              <% if( roleId != 4 && user.teamStatus === "Заявка подана" && status.teamId === team.id) {%>
 
                                    <form class="rethink " action="/teammate-cancellation" method="POST">
@@ -28,9 +26,8 @@
                                     </form>  
 
                              <% } %>
-
-                                <% if( user.teamStatus === "Команды нет" ) { %>                                   
-                                    <form action="/teammate-request" method="POST">
+             <% if( user.teamStatus === "Команды нет" ) { %>                                   
+                            <form action="/teammate-request" method="POST">
                                         <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                                         <input type="hidden" name="teamId" value="<%=team.id%>">
                                         <button type='submit'  class="right uniqbtn"> <i class="more fas fa-plus-circle"></i> </button>
@@ -44,16 +41,16 @@
                                     <% } %>
                                      <%if(team.userId === userId) { %>
                                         <a  href="/edit-team/<%=team.id %>?edit=ture"><i class="left more fas fa-edit"></i></a>
-                                    <% }  %>
-                             </div>
-                        </div>
-                    </div>
+                                    <% }  %>  
+                             </div>   
+                        </div>  
+                    </div>   
                 </div>
-
             <% } %>
-
         </div>
-
+     <% if (roleId === 5) { %>   
+        <a class="right linkButton" href="/add-team" alt="Создать свою команду"> Добавить </a> 
+    <% } %>
 <% } else { %>
 
     <div class="container  teams-card">
