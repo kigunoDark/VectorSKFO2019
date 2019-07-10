@@ -108,12 +108,12 @@ exports.postSignUp = async (req,res) => {
     const imageUrl = photo.path;
     var dimensions = sizeOf(imageUrl);
    
-    if(dimensions.height != dimensions.width || dimensions.height > 800 || dimensions.width > 800 )
-    {
-        req.flash('errors', 'Ширина и высота изображения должны быть одинаковы и не меньше 800px')
-        console.log('Ошибка с картинкой');
-        return res.redirect('/');
-    }
+    // if(dimensions.height != dimensions.width || dimensions.height > 800 || dimensions.width > 800 )
+    // {
+    //     req.flash('errors', 'Ширина и высота изображения должны быть одинаковы и не меньше 800px')
+    //     console.log('Ошибка с картинкой');
+    //     return res.redirect('/');
+    // }
     
     if(!errors.isEmpty()){
         
@@ -158,55 +158,58 @@ exports.postSignUp = async (req,res) => {
     User.findOne({where: {email: email}})
     .then(userDoc =>{
         if(userDoc){
+            res.redirect('/')
             return Promise.reject(
                 'Данный email адресс уже занят другим пользователем.'
             )
-        }
-    });
-    
-         bcrypt
-        .hash(password, 12)
-        .then(hashedPassword => {
-            const user = new User({
-                name: name,
-                surname: surname,
-                secondname: secondname, 
-                city: city,
-                univercity: univercity,
-                email: email,
-                phone: phone,
-                date: date,
-                social: social,
-                position: position,
-                exp: exp,
-                socityExp: socityExp,
-                eventsExp: eventsExp,
-                character: character,
-                strengths: strengths,
-                why: why,
-                size: size,
-                photo: imageUrl,
-                password: hashedPassword,
-                roleId: roleId,
-                status: status,
-                teamStatus: teamStatus
-               
-            });
-            return user.save();
-        }) 
-        .then(result => {
-            res.redirect('/user-login');
-           return transporter.sendMail({
-                to: email,
-                from: 'kiguno1996@gmail.com',
-                subject: 'Поздравляем, вы прошли первый этап регистрации "ВекторСКФО',
-                html: '<h1 Команда вектор ждет тебя!!! </h1>',
-                html: '<p style="text-align: justify; padding: 5%; margin: 0 auto;"> Добрый день. Сейчас вы зарегестрировались участник. Если у вас есть команда вы можете найти ее в списке и присоединиться к ней, также вы можете создать команду и пригласить в нее участников. </p>'
-            }); 
+        } else {
+            bcrypt
+            .hash(password, 12)
+            .then(hashedPassword => {
+                const user = new User({
+                    name: name,
+                    surname: surname,
+                    secondname: secondname, 
+                    city: city,
+                    univercity: univercity,
+                    email: email,
+                    phone: phone,
+                    date: date,
+                    social: social,
+                    position: position,
+                    exp: exp,
+                    socityExp: socityExp,
+                    eventsExp: eventsExp,
+                    character: character,
+                    strengths: strengths,
+                    why: why,
+                    size: size,
+                    photo: imageUrl,
+                    password: hashedPassword,
+                    roleId: roleId,
+                    status: status,
+                    teamStatus: teamStatus
+                   
+                });
+                return user.save();
+            }) 
+            .then(result => {
+                res.redirect('/user-login');
+               return transporter.sendMail({
+                    to: email,
+                    from: 'kiguno1996@gmail.com',
+                    subject: 'Поздравляем, вы прошли первый этап регистрации "ВекторСКФО',
+                    html: '<h1 Команда вектор ждет тебя!!! </h1>',
+                    html: '<p style="text-align: justify; padding: 5%; margin: 0 auto;"> Добрый день. Сейчас вы зарегестрировались участник. Если у вас есть команда вы можете найти ее в списке и присоединиться к ней, также вы можете создать команду и пригласить в нее участников. </p>'
+                }); 
+            })
+            .catch(err=> {
+                console.log(err);
         })
-        .catch(err=> {
-            console.log(err);
+        }
     })
+    
+      
 }
 
 
@@ -214,29 +217,25 @@ exports.getMainPage = async (req,res) => {
 
         const userId = req.session.user.id;
         const teamId = req.session.user.teamId;
-        
+     
     try {
-      const user = await User.findById(userId)
-         
+      const user = await User.findById(userId)    
             res.render('./users/profile-page',{
                 userId:userId,
                 user: user,
                 teamId: teamId,
                 moment: moment,
-                pageTitle: "Страница администратора",
+                pageTitle: `${user.name + " " + user.surname}`,
                 pageTipe: "adminIn"
 
             })  
-
     } catch (err) {
-
         if(err)
         {
             console.log(err);
         } else {
             console.log('Success!!!');
         }
-
     }      
 }
 
@@ -871,25 +870,37 @@ exports.declineAllRequests = (req, res) => {
 } 
 exports.getRequestsPage = (req,res) => {
     const name = req.session.user.name;
-    const teamId = req.session.user.teamId;
-    Status.findAll({
-        include:
-        [{model: User, as:'userinfo'}],
-        where: { teamId: teamId}
+    const userId = req.session.user.id;
+    let teamId = 0;
+
+    User.findById(userId)
+    .then(user => {
+        teamId = user.teamId;
     })
-    .then(statuses => {
-        res.render('./users/requests-page',{
-            statuses:statuses,
-            pageTitle: "Заявки в команду",
-            pageTipe: 'adminIn',
-            name:name
+    .then(() => {
+
+        Status.findAll({
+            include:
+            [{model: User, as:'userinfo'}],
+            where: { teamId: teamId}
         })
-  
+        .then(statuses => {
+            res.render('./users/requests-page',{
+                statuses:statuses,
+                pageTitle: "Заявки в команду",
+                pageTipe: 'adminIn',
+                name:name
+            })
+      
+        })
+        .catch(err => {
+            console.log(err);
+        })
+        
     })
     .catch(err => {
         console.log(err);
     })
-   
 }
 
      
