@@ -219,12 +219,8 @@ exports.getMainPage = async (req,res) => {
         const teamId = req.session.user.teamId;
      
     try {
-<<<<<<< HEAD
       const user = await User.findByPk(userId)
          
-=======
-      const user = await User.findById(userId)    
->>>>>>> 69e4977bca2b80b6fc1e3b3661e95b5d184458ef
             res.render('./users/profile-page',{
                 userId:userId,
                 user: user,
