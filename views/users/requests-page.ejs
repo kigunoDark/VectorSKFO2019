@@ -41,7 +41,7 @@
                         <p> Вы действительно хотите принять данного участника в команду? После согласия ему на почту будет отправленно подтверждение!</p>
                 </div>
                     <div class="modal-footer">
-                        <form class="adminInt" id="accept-teammate"  >
+                        <form class="adminInt" action="accept-teammate" method="POST" id="accept-teammate"  >
                             <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                             <input type="hidden" id="reqTeamMateId" value="<%= status.userinfo.id %>" name="teamMateId">
                             <input type="hidden" id="reqTeamId" value="<%= status.teamId %>" name="teamId">
@@ -61,14 +61,17 @@
                         <p> Вы действительно хотите откланить заявку данного участника в команду? После согласия ему на почту будет отправленно подтверждение!</p>
                     </div>
                         <div class="modal-footer">
+                        <form action="/reject-user/<%=status.userinfo.id%>" id="rejection" method="POST">
                                 <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                                 <input type="hidden" value="<%= status.userinfo.id %>" name="teamMateId">
                                 <input type="hidden" value="<%= status.userinfo.email %>" name="teamMateEmail">
                                 <% if (statuses.length > 1) {%>
-                                <a href="javascript:{}"  class="requesty modal-close waves-effect waves-green btn-flat" onclick="deleteTeam(this)">Отказать</a>
+                                <a href="javascript:{}"  class="requesty modal-close waves-effect waves-green btn-flat" onclick="document.getElementById('rejection').submit()">Отказать</a>
+                                                                                         
                                 <% } else {  %>
-                                <a href="javascript:{}"  class="requesty modal-close waves-effect waves-green btn-flat" onclick="deleteTeams(this)">Отказать</a>
+                                <a href="javascript:{}"  class="requesty modal-close waves-effect waves-green btn-flat"  onclick="document.getElementById('rejection').submit()">Отказать</a>
                                 <% } %>
+                        </form>
                         </div>
                     </div> 
                 </div>   

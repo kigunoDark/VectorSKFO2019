@@ -551,7 +551,13 @@ exports.getAddTeamPage =  async (req, res ) => {
 exports.getTeamsPage = async (req, res) => {
 
     const userId = req.session.user.id;
-    let teamStat = false;
+    let teamStatus = '';
+    User.findById(userId)
+    .then(user => 
+        {
+            teamStatus = user.teamStatus;
+        }
+    )
 
     try { 
 
@@ -567,7 +573,7 @@ exports.getTeamsPage = async (req, res) => {
                 userId:userId,
                 teams: teams,
                 user: user,
-                teamStat:teamStat,
+                teamStatus:teamStatus,
                 pageTitle: "Команды участников",
                 pageTipe: "adminIn"
             })
@@ -680,6 +686,15 @@ exports.getListOfUsers = async (req, res) => {
     try {
 
         const users = await User.findAll()
+        for(let i = 0; i < users.length; i ++)
+        {
+            if(users[i].id === activeUserId)
+            {
+                let middle = users[i];
+                users[i] = users[0];
+                users[0] = middle;
+            }
+        }
         
         res.render('./users/users-page', {
             activeUserId:activeUserId,
@@ -809,6 +824,8 @@ exports.postCancelRequest = (req, res) => {
     
     User.findById(userId)
     .then(user => {
+        
+       
         user.teamId = 0;
         user.teamStatus = 'Команды нет'
         return user.save()
@@ -840,32 +857,40 @@ exports.postCancelRequest = (req, res) => {
 
     })
    
-            // req.session.user.teamId = 0;   
+            req.session.user.teamId = 0;   
 }
 
 exports.declineAllRequests = (req, res) => {
     console.log('a good effort bro');
-    const teamId= req.session.user.teamId;
-    Status.findAll({where: {teamId:teamId}})
-    .then(statuses => {
-        for(let i = 0 ; i< statuses.length; i++ )
-        {
-            console.log('This is a stauts id: ' + statuses[i].userId);
-            User.findOne({where: {id: statuses[i].userId }})
-            .then(user => {
-                console.log('This is your userId ' + user.name + " team status " + user.teamStatus);
-                user.update({
-                    teamStatus:'Команды нет'
-                })
-
-            })
-        }
-       
+    const userId = req.session.user.id;
+    let teamId = '';
+    User.findById(userId)
+    .then(user => {
+        teamId = user.teamId;
     })
-    Status.destroy({where: {teamId: teamId}})
     .then(() => {
-        res.redirect('/team-requests');
+        Status.findAll({where: {teamId:teamId}})
+        .then(statuses => {
+            for(let i = 0 ; i< statuses.length; i++ )
+            {
+                console.log('This is a stauts id: ' + statuses[i].userId);
+                User.findOne({where: {id: statuses[i].userId }})
+                .then(user => {
+                    console.log('This is your userId ' + user.name + " team status " + user.teamStatus);
+                    user.update({
+                        teamStatus:'Команды нет'
+                    })
+    
+                })
+            }
+           
+        })
+        Status.destroy({where: {teamId: teamId}})
+        .then(() => {
+            res.redirect('/team-requests');
+        })
     })
+
     
 } 
 exports.getRequestsPage = (req,res) => {
@@ -950,7 +975,7 @@ exports.postAcceptRequest = (req, res) => {
     })
 
     .then(() => {
-        res.status(200).json({message:'Success!!'});
+        res.redirect('/team-requests');
         return transporter.sendMail({
             to: teamMateEmail,
             from: 'kiguno1996@gmail.com',
@@ -960,9 +985,8 @@ exports.postAcceptRequest = (req, res) => {
         }); 
     })
     .catch(err => {
-        res.status(500).json({message: "Deleting teamMate feiled."});
+        console.log(err);
     })
-   console.log('This is your session user team id: ' + req.session.user.teamId);
  }  
 
  exports.postDeleteTeam = (req, res) => {

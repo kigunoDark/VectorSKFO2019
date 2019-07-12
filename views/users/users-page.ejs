@@ -27,7 +27,9 @@
 
 <tbody class="all-users">
 <% for (let user of users ) { %>
-<% if (user.s_type != "Заявка отклонена.") { %>
+
+<% if (user.s_type != "Заявка отклонена." && user.teamStatus != "Лидер команды") { %>
+  
 <tr class="<%if(user.id === activeUserId) { %> accepted-user <% }%>">
 <td><%= user.surname %></td>
 <td><%= user.name%></td>
@@ -55,6 +57,7 @@
     <input type="hidden" value="<%= user.id %>" name="teamMateId">
     <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button>
   </form>
+  
 <% } %> 
 <% if(roleId === 1 || roleId === 2) { %>
     <td  class="center">
