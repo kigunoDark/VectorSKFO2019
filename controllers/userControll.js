@@ -889,10 +889,66 @@ exports.declineAllRequests = (req, res) => {
         .then(() => {
             res.redirect('/team-requests');
         })
+    }) 
+} 
+
+exports.postInviteTeammate = (req, res) => {
+    
+    let leaderId = req.session.user.id;
+    const teamMateId = req.body.teamMateId;
+    let teamId = '';
+    let teamsId = [];
+    User.findById(leaderId)
+    .then(leader =>{ 
+
+        teamId = leader.teamId;
+        User.findById(teamMateId)
+        .then(user => {
+        
+            
+            teamsId[0] = user.eventStatus;
+            console.log('This is the lengh' + teamsId.length);
+            if(teamsId[0] == 0)
+            {
+     
+                teamsId[0] = leaderId;
+                teamsId = teamsId.join('');
+            
+              
+            } else {
+            for(let id of teamsId)
+            {
+                console.log('This is your id ' + id);
+                console.log('THis is your leader id ' + leaderId);
+                if(id == leaderId)
+                {
+                    console.log("You has already accept this user");
+                } 
+                else {
+                        teamsId += leaderId;
+                      
+                        console.log("This is a type: " + typeof(teamsId));
+                    console.log('Success');
+                }
+            }
+            
+            }
+            user.update({
+                eventStatus: teamsId
+            })
+            
+        })
+        .then(() => {
+            res.redirect('/users-list');
+        })
+      
+    })
+    .catch(err => {
+        console.log(err);
     })
 
-    
-} 
+}
+
 exports.getRequestsPage = (req,res) => {
     const name = req.session.user.name;
     const userId = req.session.user.id;

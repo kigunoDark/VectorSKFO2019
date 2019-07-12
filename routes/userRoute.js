@@ -19,6 +19,7 @@ router.get('/admins-list', isAuth, userControll.getAdmins);
 
 
 router.post('/decline-all', isAuth, userControll.declineAllRequests);
+router.post('/invite-teammate', isAuth, userControll.postInviteTeammate);
 router.post('/admindel-member', isAuth, userControll.adminDeleteMember);
 router.post('/adminDecline-member', isAuth, userControll.adminDeclineMember);
 router.post('/adminAccept-member', isAuth, userControll.adminAcceptMember);

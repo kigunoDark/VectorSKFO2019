@@ -46,7 +46,7 @@
 </td>
 <td class="center">
 <% if (roleId === 4 ) {%>
-  <form class="adminInt" id="delete-teammate" action="/admin/delete-mate" method="POST"> 
+  <form class="adminInt" id="delete-teammate" action="/invite-teammate" method="POST"> 
     <input type="hidden" name="_csrf" value="<%=csrfToken%>">
     <input type="hidden" value="<%= user.id %>" name="teamMateId">
     <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button>
