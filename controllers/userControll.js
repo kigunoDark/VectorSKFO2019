@@ -892,8 +892,7 @@ exports.declineAllRequests = (req, res) => {
     }) 
 } 
 
-exports.postInviteTeammate = (req, res) => {
-    
+exports.postInviteTeammate = (req, res) => { 
     let leaderId = req.session.user.id;
     const teamMateId = req.body.teamMateId;
     let teamId = '';
@@ -902,6 +901,7 @@ exports.postInviteTeammate = (req, res) => {
     .then(leader =>{ 
 
         teamId = leader.teamId;
+        console.log("This is a  teamID: " + leader.teamId)
         User.findById(teamMateId)
         .then(user => {
         
@@ -911,21 +911,20 @@ exports.postInviteTeammate = (req, res) => {
             if(teamsId[0] == 0)
             {
      
-                teamsId[0] = leaderId;
+                teamsId[0] = teamId;
                 teamsId = teamsId.join('');
             
               
             } else {
             for(let id of teamsId)
             {
-                console.log('This is your id ' + id);
-                console.log('THis is your leader id ' + leaderId);
-                if(id == leaderId)
+              
+                if(id == teamId)
                 {
                     console.log("You has already accept this user");
                 } 
                 else {
-                        teamsId += leaderId;
+                        teamsId += teamId;
                       
                         console.log("This is a type: " + typeof(teamsId));
                     console.log('Success');
@@ -948,6 +947,87 @@ exports.postInviteTeammate = (req, res) => {
     })
 
 }
+
+exports.getInvitation = (req, res) => {
+    var userId = req.session.user.id;
+    let h = [];
+   
+          Team.findAll()
+          .then(teams => 
+            {
+                User.findById(userId)
+                .then(user => {
+                
+                    for(let team of user.eventStatus)
+                    {
+                        if(teams.id = team)
+                        {
+                            res.render('./users/invitation',{
+                                teams: teams,
+                                userId:userId,
+                                user: user,
+                                moment: moment,
+                                pageTitle: `${user.name + " " + user.surname}`,
+                                pageTipe: "adminIn"
+                             });
+                        }
+                    }
+                })
+              
+            })
+   
+    .catch(err => {
+        console.log(err);
+    })
+  
+}
+
+exports.postAcceptInvitation = (req, res) => {
+    console.log('This is working');
+}
+
+exports.postCancelInvitation = (req, res) => {
+    var teamId = req.body.teamId;
+    var useId = req.session.user.id;
+
+    User.findById(useId)
+    .then(user => {
+        var arr = user.eventStatus.split('');
+        console.log( "TIS IS A: " + arr.length);
+        for(let i = 0; i < arr.length; i++)
+        {
+            if(arr[i] === teamId)
+            {
+               arr.splice(i,1);
+            }
+
+        }
+
+        if(arr.length < 1)
+        {
+            arr = 0;
+            arr = arr.join();
+        } else if(arr.length >= 1)
+        {
+            arr = arr.join();
+            user.update({
+                eventStatus: arr
+            })
+            return user.save();
+        }
+    })
+    .then(()=>{
+         res.redirect('/invitation');
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+exports.postCancelAllInvintation = (req, res) => {
+    console.log('Cancle all invintations is working');
+}
+
 
 exports.getRequestsPage = (req,res) => {
     const name = req.session.user.name;
