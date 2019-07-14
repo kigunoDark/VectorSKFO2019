@@ -552,7 +552,13 @@ exports.getAddTeamPage =  async (req, res ) => {
 exports.getTeamsPage = async (req, res) => {
 
     const userId = req.session.user.id;
-    let teamStat = false;
+    let teamStatus = '';
+    User.findById(userId)
+    .then(user => 
+        {
+            teamStatus = user.teamStatus;
+        }
+    )
 
     try { 
 
@@ -568,7 +574,7 @@ exports.getTeamsPage = async (req, res) => {
                 userId:userId,
                 teams: teams,
                 user: user,
-                teamStat:teamStat,
+                teamStatus:teamStatus,
                 pageTitle: "Команды участников",
                 pageTipe: "adminIn"
             })
@@ -681,6 +687,15 @@ exports.getListOfUsers = async (req, res) => {
     try {
 
         const users = await User.findAll()
+        for(let i = 0; i < users.length; i ++)
+        {
+            if(users[i].id === activeUserId)
+            {
+                let middle = users[i];
+                users[i] = users[0];
+                users[0] = middle;
+            }
+        }
         
         res.render('./users/users-page', {
             activeUserId:activeUserId,
@@ -810,6 +825,8 @@ exports.postCancelRequest = (req, res) => {
     
     User.findByPk(userId)
     .then(user => {
+        
+       
         user.teamId = 0;
         user.teamStatus = 'Команды нет'
         return user.save()
@@ -841,34 +858,178 @@ exports.postCancelRequest = (req, res) => {
 
     })
    
-            // req.session.user.teamId = 0;   
+            req.session.user.teamId = 0;   
 }
 
 exports.declineAllRequests = (req, res) => {
     console.log('a good effort bro');
-    const teamId= req.session.user.teamId;
-    Status.findAll({where: {teamId:teamId}})
-    .then(statuses => {
-        for(let i = 0 ; i< statuses.length; i++ )
-        {
-            console.log('This is a stauts id: ' + statuses[i].userId);
-            User.findOne({where: {id: statuses[i].userId }})
-            .then(user => {
-                console.log('This is your userId ' + user.name + " team status " + user.teamStatus);
-                user.update({
-                    teamStatus:'Команды нет'
-                })
-
-            })
-        }
-       
+    const userId = req.session.user.id;
+    let teamId = '';
+    User.findById(userId)
+    .then(user => {
+        teamId = user.teamId;
     })
-    Status.destroy({where: {teamId: teamId}})
     .then(() => {
-        res.redirect('/team-requests');
-    })
+        Status.findAll({where: {teamId:teamId}})
+        .then(statuses => {
+            for(let i = 0 ; i< statuses.length; i++ )
+            {
+                console.log('This is a stauts id: ' + statuses[i].userId);
+                User.findOne({where: {id: statuses[i].userId }})
+                .then(user => {
+                    console.log('This is your userId ' + user.name + " team status " + user.teamStatus);
+                    user.update({
+                        teamStatus:'Команды нет'
+                    })
     
+                })
+            }
+           
+        })
+        Status.destroy({where: {teamId: teamId}})
+        .then(() => {
+            res.redirect('/team-requests');
+        })
+    }) 
 } 
+
+exports.postInviteTeammate = (req, res) => { 
+    let leaderId = req.session.user.id;
+    const teamMateId = req.body.teamMateId;
+    let teamId = '';
+    let teamsId = [];
+    User.findById(leaderId)
+    .then(leader =>{ 
+
+        teamId = leader.teamId;
+        console.log("This is a  teamID: " + leader.teamId)
+        User.findById(teamMateId)
+        .then(user => {
+        
+            
+            teamsId[0] = user.eventStatus;
+            console.log('This is the lengh' + teamsId.length);
+            if(teamsId[0] == 0)
+            {
+     
+                teamsId[0] = teamId;
+                teamsId = teamsId.join('');
+            
+              
+            } else {
+            for(let id of teamsId)
+            {
+              
+                if(id == teamId)
+                {
+                    console.log("You has already accept this user");
+                } 
+                else {
+                        teamsId += teamId;
+                      
+                        console.log("This is a type: " + typeof(teamsId));
+                    console.log('Success');
+                }
+            }
+            
+            }
+            user.update({
+                eventStatus: teamsId
+            })
+            
+        })
+        .then(() => {
+            res.redirect('/users-list');
+        })
+      
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+}
+
+exports.getInvitation = (req, res) => {
+    var userId = req.session.user.id;
+    let h = [];
+   
+          Team.findAll()
+          .then(teams => 
+            {
+                User.findById(userId)
+                .then(user => {
+                
+                    for(let team of user.eventStatus)
+                    {
+                        if(teams.id = team)
+                        {
+                            res.render('./users/invitation',{
+                                teams: teams,
+                                userId:userId,
+                                user: user,
+                                moment: moment,
+                                pageTitle: `${user.name + " " + user.surname}`,
+                                pageTipe: "adminIn"
+                             });
+                        }
+                    }
+                })
+              
+            })
+   
+    .catch(err => {
+        console.log(err);
+    })
+  
+}
+
+exports.postAcceptInvitation = (req, res) => {
+    console.log('This is working');
+}
+
+exports.postCancelInvitation = (req, res) => {
+    var teamId = req.body.teamId;
+    var useId = req.session.user.id;
+
+    User.findById(useId)
+    .then(user => {
+        var arr = user.eventStatus.split('');
+        console.log( "TIS IS A: " + arr.length);
+        for(let i = 0; i < arr.length; i++)
+        {
+            if(arr[i] === teamId)
+            {
+               arr.splice(i,1);
+            }
+
+        }
+
+        if(arr.length < 1)
+        {
+            arr = 0;
+            arr = arr.join();
+        } else if(arr.length >= 1)
+        {
+            arr = arr.join();
+            user.update({
+                eventStatus: arr
+            })
+            return user.save();
+        }
+    })
+    .then(()=>{
+         res.redirect('/invitation');
+    })
+    .catch(err => {
+        console.log(err);
+    })
+}
+
+exports.postCancelAllInvintation = (req, res) => {
+    console.log('Cancle all invintations is working');
+}
+
+
 exports.getRequestsPage = (req,res) => {
     const name = req.session.user.name;
     const userId = req.session.user.id;
@@ -951,7 +1112,7 @@ exports.postAcceptRequest = (req, res) => {
     })
 
     .then(() => {
-        res.status(200).json({message:'Success!!'});
+        res.redirect('/team-requests');
         return transporter.sendMail({
             to: teamMateEmail,
             from: 'kiguno1996@gmail.com',
@@ -961,9 +1122,8 @@ exports.postAcceptRequest = (req, res) => {
         }); 
     })
     .catch(err => {
-        res.status(500).json({message: "Deleting teamMate feiled."});
+        console.log(err);
     })
-   console.log('This is your session user team id: ' + req.session.user.teamId);
  }  
 
  exports.postDeleteTeam = (req, res) => {

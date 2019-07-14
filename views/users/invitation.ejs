@@ -1,0 +1,44 @@
+<%- include('../layouts/navbar.ejs')%>
+
+
+<main class="users-page">
+    <div class="container ">
+        <table class="team-table highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Подробнее</th>
+                    <th>Принять </th>
+                    <th>Отклонить </th>
+                </tr>
+            </thead>
+            <tbody class="all-users">
+                <% for(let team of teams) { %>
+                    <tr>
+                        <td><%= team.t_name %></td>
+                        <td> <a  href="/team-details/<%=team.id%>"  class="teamEdit" > <i class="fas fa-info-circle"></i> </a></td>
+                        <td>
+                            <form id="accept" action="/accept-invitation" method="POST">
+                                <input type="hidden" name="teamId" value="<%=team.id%>">
+                                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                <a href="javascript:{}" onclick="document.getElementById('accept').submit();" ><i class="userAdd fas fa-plus-circle"></i></a>
+                            </form>
+                        </td>
+                        <td>
+                            <form id="cancel" action="/cancel-invitation" method="POST">
+                                <input type="hidden" name="teamId" value="<%=team.id%>">
+                                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                   <button type="submit"> her </button>
+                                <a href="javascript:{}" onclick="document.getElementById('cancel').submit();"><i class="userAdd fas fa-minus-circle"></i></a>    
+                            </form>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+      
+    </div>
+</main>
+
+
+<%- include('../layouts/footer.ejs') %>

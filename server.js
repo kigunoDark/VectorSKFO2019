@@ -134,38 +134,6 @@ sequelize
         } else {
             console.log("Your server is running on a port 8080");
         }
-
-        io.on('connection', function(socket) {
-         
-            socket.on('addRequest', function(newRequest) {
-                const reqTeamMateId = newRequest.reqTeamMateId;
-                console.log(reqTeamMateId);
-                const reqTeamId = newRequest.reqTeamId;
-                const ms = "  1";
-                User.findByPk(reqTeamMateId)
-                .then(user => {
-                    console.log(user.name);
-                    
-                });
-                User.findByPk(reqTeamMateId)
-                .then(user => {
-                    if(user)
-                    {
-                    user.update({
-                        teamId:reqTeamId,
-                        teamStatus: "Принят"
-                    })
-                    Status.destroy({where: {userId:reqTeamMateId}})
-                    io.emit("addRequest", ms );
-                    return user.save();
-                }
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-            })
-            console.log('Socket is working')
-        })
     });
 
 })

@@ -16,9 +16,11 @@ router.get('/team-details/:id', isAuth, userControll.getTeamDetails);
 router.get('/edit-team/:id', isAuth, userControll.getEditTeam);
 router.get('/team-requests', isAuth, userControll.getRequestsPage);
 router.get('/admins-list', isAuth, userControll.getAdmins);
+router.get('/invitation', isAuth, userControll.getInvitation);
 
 
 router.post('/decline-all', isAuth, userControll.declineAllRequests);
+router.post('/invite-teammate', isAuth, userControll.postInviteTeammate);
 router.post('/admindel-member', isAuth, userControll.adminDeleteMember);
 router.post('/adminDecline-member', isAuth, userControll.adminDeclineMember);
 router.post('/adminAccept-member', isAuth, userControll.adminAcceptMember);
@@ -31,7 +33,10 @@ router.post('/edit-user', isAuth, userControll.postEditUser);
 router.post('/add-team', isAuth, userControll.postAddTeam);
 router.post('/teammate-request', isAuth, userControll.postAddRequest);
 router.post('/teammate-cancellation', isAuth, userControll.postCancelRequest);
-router.post('/accept-user',isAuth, userControll.postAcceptRequest);
-router.delete('/reject-user/:teamMateId', isAuth, userControll.denyRequest);
+router.post('/accept-teammate',isAuth, userControll.postAcceptRequest);
+router.post('/reject-user/:teamMateId', isAuth, userControll.denyRequest);
 router.post('/mentor-request', isAuth, userControll.postMentorRequest);
+router.post('/accept-invitation', isAuth, userControll.postAcceptInvitation);
+router.post('/cancel-invitation', isAuth, userControll.postCancelInvitation);
+router.post('/cancel-all-invintation', isAuth,userControll.postCancelAllInvintation);
 module.exports = router;
