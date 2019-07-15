@@ -51,6 +51,7 @@
     "save": "^2.3.3",
     "sequelize": "^4.42.0",
     "socket.io": "^2.2.0",
+    "uuidv4": "4.0.0",
     "validator": "^10.11.0"
   },
   "devDependencies": {},

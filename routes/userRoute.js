@@ -28,7 +28,7 @@ router.post('/delete-admin', isAuth, userControll.postDeleteAdmin);
 router.post('/add-admin', isAuth, userControll.postAddAmin);
 router.post('/delete-team', isAuth, userControll.postDeleteTeam);
 router.post('/edit-team', isAuth, userControll.postEditTeam);
-router.post('/signup', userControll.postSignUp);
+// router.post('/signup', userControll.postSignUp)
 router.post('/edit-user', isAuth, userControll.postEditUser);
 router.post('/add-team', isAuth, userControll.postAddTeam);
 router.post('/teammate-request', isAuth, userControll.postAddRequest);

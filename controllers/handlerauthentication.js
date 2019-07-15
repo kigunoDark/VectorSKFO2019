@@ -1,20 +1,18 @@
-const User = require('../models/users');
+const User = require('../models/newUsers');
 
 async function isLoggedIn (req,res, next) {
-        req.locals = {};
+        req.session = {};
     try {
+        res.session.user = {};
         let user = await User.findOne({
-            where: { cookie : req.cookies.seals}
+            where: { cookie : req.cookies.vector}
         });
-         req.session.name = user.name;
-         req.session.avatar = user.avatar;
-         req.session.id = user.id;
+        console.log(user);
+         req.session.user.id= user.id;
          req.session.isLoggedIn = true;
-         req.session.email = user.email;
-         req.session.phone = user.phone;
-         req.session.link = user.link;
-         req.session.score = user.score;
+         req.isLoggedIn = true;
     } catch (error) {
+        req,isLoggedIn = true;
          req.session.isLoggedIn = false;
     }
     

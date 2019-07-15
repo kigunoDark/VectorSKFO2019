@@ -1,30 +1,28 @@
 const path = require('path');
 const express = require('express');
 const app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const adminRoute = require('./routes/adminRoute');
 const errControll = require('./controllers/errorController');
 const sequelize = require('./data/database');
-const session = require('express-session');
-var cookieParser = require('cookie-parser');
-var SequelizeStore = require('connect-session-sequelize')(session.Store);
+const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const handleAuth = require('./controllers/handlerauthentication');
 // Зачища от csrf
-const csrf = require('csurf');
+
 // Для вывода ошибок через сессию
 const flash = require('connect-flash');
 
 // My models
 const Team = require('./models/team');
 const Role = require('./models/roles');
-const User = require('./models/users');
+const User = require('./models/newUsers');
 const Status = require('./models/status');
 
-var requests = [];
 
-const csrfProtection = csrf();
+
+
 
 const fileFilter = (req,file, cb) => {
     if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
@@ -46,54 +44,38 @@ const fileStorage = multer.diskStorage({
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
+app.disable('x-powered-by');
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+
 
 app.use(multer({storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/images' ,express.static(path.join(__dirname, 'images')));
-app.use(cookieParser());
-app.use(session({
-    secret: 'be a human', 
-    resave: false, 
-    saveUninitialized: false, 
-    store: new SequelizeStore({
-    db: sequelize
-})
-}));
-app.use(csrfProtection);
+
+app.use(handleAuth)
+
 app.use(flash());
-app.use((req,res,next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
+app.use(async (req,res,next) => {
+    try{
+    res.locals.isAuthenticated = await req.session.isLoggedIn;
+    res.locals.csrfToken = 'none';
     if(res.locals.isAuthenticated)
     {
-      
-        const id = req.session.user.id;
+        res.locals.userId = req.session.id;
+        res.locals.name = req.session.name;
+        res.locals.roleId = req.session.roleId;
         
-         User.findByPk(id)
-            .then(user => {
-    
-                res.locals.userId = user.id;
-                res.locals.name = user.name;
-                res.locals.roleId = user.roleId;
-        
-        })
-        .catch(err => {
 
-            if(err)
-            {
-                console.log(err);
-            } else {
-                console.log('Find everything!');
-            }
-
-        })
     }
+}catch{
+    console.log('заебала эта поебота');
+}
     next();
 })
-
 
 
 const landRoute = require('./routes/userRoute');
