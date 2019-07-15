@@ -950,8 +950,7 @@ exports.postInviteTeammate = (req, res) => {
 
 exports.getInvitation = (req, res) => {
     var userId = req.session.user.id;
-    let h = [];
-   
+
           Team.findAll()
           .then(teams => 
             {
@@ -1006,7 +1005,11 @@ exports.postCancelInvitation = (req, res) => {
         if(arr.length < 1)
         {
             arr = 0;
-            arr = arr.join();
+            user.update({
+                eventStatus: arr
+            })
+            return user.save();
+
         } else if(arr.length >= 1)
         {
             arr = arr.join();
