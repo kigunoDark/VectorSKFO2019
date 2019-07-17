@@ -14,15 +14,30 @@
             <p class="team-desctiption">  <span style="color:black;"> Должность: </span><%= user.position %></p> 
             <p class="team-desctiption"> <span style="color:black;"> Статус: </span> <% if (user.roleId === 1) { %> Главный администратор <% }  else  if(user.roleId === 2) { %> Администратор <% } else if  (user.roleId === 5) { %> Участник <% } else if (user.roleId === 4 ) { %> Лидер команды <% } else if(user.roleId === 3) { %> Ментор <% } %> </p>
            <p class="team-desctiption" style="color:black;"> 
-                  Статус заявки: <span class="<% if (user.s_type === 'Заявка принята') { %> accepted-user <% } else if (user.s_type === 'Заявка отклонена.') { %> rejected <% } %> "><%= user.s_type %> </span> </p>
+                  Статус заявки: <span class="<% if (user.s_type === 'Заявка принята') { %> accepted-user <% } else if (user.s_type === 'Заявка отклонена.') { %> rejected <% } %> "> <%if(!user.s_type) {%> Расматривается <% } else { %> <%= user.s_type %> <% }%> </span> </p>
         
      
             <% if(user.teamStatus != 'Лидер команды' && user.teamStatus != "Принят") { %>
                 <p class="team-desctiption">
+                  <% if(user.teamStatus === "Команды нет") { %>
                 <form class='team-desctiption' action='/mentor-request' method="POST" id="mentRequest">
                     <input type="hidden" name="_csrf" value="<%=csrfToken%>">
-                    <span style="color:black;"> Стать наставником: <a href="javascript:{}" onclick="document.getElementById('mentRequest').submit();" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;">Подать заявку</a></span> </p>
+                        <span style="color:black;"> Стать наставником:
+                            <a href="javascript:{}" onclick="document.getElementById('mentRequest').submit();" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;">Подать заявку</a>
+                        </span>
                 </form>
+                    <% } else { %>
+                <form class='team-desctiption' action='/mentor-canclereq' method="POST" id="mentRequest">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <span style="color:black;"> Стать наставником:
+                            <a href="javascript:{}" onclick="document.getElementById('mentRequest').submit();" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;">Отменить заявку</a>
+                        </span>
+                </form>
+                    <% } %>
+                    
+                    
+                </p>
+               
             <% } %>
              
             <p class="team-desctiption"> <span style="color:black;"> Команда: <a href="<%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>/teams-page<% } else { %>/team-details/<%=user.teamId%><% } %>" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;"><%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>Создать команду<% } else { %> Смотреть команду <% } %></a></span> </p>

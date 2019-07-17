@@ -948,88 +948,90 @@ exports.postInviteTeammate = (req, res) => {
 
 }
 
-exports.getInvitation = (req, res) => {
-    var userId = req.session.user.id;
-
-          Team.findAll()
-          .then(teams => 
-            {
-                User.findById(userId)
-                .then(user => {
-                
-                    for(let team of user.eventStatus)
-                    {
-                        if(teams.id = team)
-                        {
-                            res.render('./users/invitation',{
-                                teams: teams,
-                                userId:userId,
-                                user: user,
-                                moment: moment,
-                                pageTitle: `${user.name + " " + user.surname}`,
-                                pageTipe: "adminIn"
-                             });
-                        }
-                    }
-                })
-              
-            })
-   
-    .catch(err => {
-        console.log(err);
-    })
-  
-}
-
-exports.postAcceptInvitation = (req, res) => {
-    console.log('This is working');
-}
-
-exports.postCancelInvitation = (req, res) => {
-    var teamId = req.body.teamId;
-    var useId = req.session.user.id;
-
-    User.findById(useId)
-    .then(user => {
-        var arr = user.eventStatus.split('');
-        console.log( "TIS IS A: " + arr.length);
-        for(let i = 0; i < arr.length; i++)
-        {
-            if(arr[i] === teamId)
-            {
-               arr.splice(i,1);
+exports.getMentors = (req, res) =>{
+        const name = req.session.user.name;
+        const roleId = req.session.user.roleID;
+        
+        User.findAll({
+            where:{
+                teamStatus:"Стать ментором"
             }
-
-        }
-
-        if(arr.length < 1)
+        })
+        .then(users => {
+            console.log(users);
+            res.render('./users/mentors',
         {
-            arr = 0;
-            user.update({
-                eventStatus: arr
-            })
-            return user.save();
+            pageTitle: "Наставники",
+            pageTipe: 'adminIn',
+            name:name,
+            roleId: roleId,
+            users: users
+        });
+        })
+        
+}
 
-        } else if(arr.length >= 1)
-        {
-            arr = arr.join();
-            user.update({
-                eventStatus: arr
-            })
-            return user.save();
-        }
+exports.postMentorDeleteRequest = (req,res) => {
+    const userId = req.body.userId;
+    
+    User.findByPk(userId)
+    .then(user => {
+        user.update({
+            teamStatus: "Команды нет"
+        })
+        return user.save();
     })
     .then(()=>{
-         res.redirect('/invitation');
+        Status.destroy({where:{
+            userId:userId
+        }})
+        .then(() => {
+            res.redirect('/mentors');
+        })
+        
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+}
+
+exports.postMentorCancleRequest = (req, res) => {
+    const userId = req.session.user.id;
+    User.findByPk(userId)
+    .then(user => {
+        user.update({
+            teamStatus:"Команды нет"
+        })
+        return user.save();
+    })
+    .then(() => {
+        Status.destroy({
+            where: {
+                userId: userId
+            }
+        })
+        res.redirect('/profile');
     })
     .catch(err => {
         console.log(err);
     })
 }
+// INVENTATION OF USER - THIS IS IN A PROCESS
+// exports.getInvitation = (req, res) => {
+//     console.log('in a process');
+// }
 
-exports.postCancelAllInvintation = (req, res) => {
-    console.log('Cancle all invintations is working');
-}
+// exports.postAcceptInvitation = (req, res) => {
+//     console.log('This is working');
+// }
+
+// exports.postCancelInvitation = (req, res) => {
+//     console.log("Invintation cancalation")
+// }
+
+// exports.postCancelAllInvintation = (req, res) => {
+//     console.log('Cancle all invintations is working');
+// }
 
 
 exports.getRequestsPage = (req,res) => {

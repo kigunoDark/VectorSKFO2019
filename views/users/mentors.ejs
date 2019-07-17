@@ -1,0 +1,50 @@
+
+<%- include("../layouts/navbar.ejs")%>
+<main  class="users-page"> 
+    <div  class="container">
+    <% if(users.length > 0) { %>
+        <table class="team-table highlight responsive-table">
+            <thead>
+            <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Должность</th>
+                <th>Город</th>
+                <th class="center"> Принять </th>
+                <th class="center"> Отклонить </th>
+                <th class="ceenter"> Удалить </th> 
+            </tr>
+            </thead>
+            <tbody class="all-users">
+            <% for(let user of users) {%>
+            <td><%= user.surname %></td>
+                <td><%= user.name%></td>
+                <td><%= user.secondname%></td>
+                <td><%= user.position %> </td>
+                <td><%= user.city %> </td>
+                <td class="center"> <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button> </td>
+                <td class="center"> <button type="submint"  class="teamAdd">  <i class=" fas fa-user-minus"></i> </button> </td>
+                <td class="center"> 
+                    <form action="/delete-mentreq" method="POST">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <input type="hidden" name="userId" value="<%= user.id %>">
+                        <button type="submint"  class="teamAdd">  <i class=" fas fa-minus-circle"></i> </button>
+                    </form> 
+                </td>
+            <% } %>
+            </tbody>
+        </table>
+        <% } else { %>
+           <div class="container  teams-card">
+                 <h3 class="center title1">Список заявок пуст </h3>
+            </div>
+                <%if (roleId === 1 || roleId === 2) { %>
+                    <a  class="right linkButton" href="№" alt="Создать свою команду"> Добавить </a>   
+                <% } %>
+        <% } %>
+
+    </div>
+</main>
+
+<%- include("../layouts/footer.ejs")%>
