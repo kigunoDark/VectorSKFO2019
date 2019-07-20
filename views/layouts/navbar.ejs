@@ -85,7 +85,10 @@
             
                 <ul id="dropdown1" class="dropdown-content">
                     <li><a href="/profile"> <i class="far fa-list-alt"></i>Профиль</a></li>
-                    <li><a href="/mentors"><i class="far fa-address-card"></i>Сотрудники</a></li>
+                      
+                    <% if(roleId === 1 ) { %>
+                        <li><a href="/mentors"><i class="far fa-address-card"></i>Сотрудники</a></li>
+                    <% } %>
                     <li><a href="/teams-page"><i class="fas fa-users"></i>Команды</a></li>
                     <%if(pageTipe != 'users') { %>
                         <%if(roleId === 4) { %>

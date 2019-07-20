@@ -16,7 +16,7 @@
            <p class="team-desctiption" style="color:black;"> 
                   Статус заявки: <span class="<% if (user.s_type === 'Заявка принята') { %> accepted-user <% } else if (user.s_type === 'Заявка отклонена.') { %> rejected <% } %> "> <%if(!user.s_type) {%> Расматривается <% } else { %> <%= user.s_type %> <% }%> </span> </p>
         
-     
+        <% if(roleId != 3) { %>
             <% if(user.teamStatus != 'Лидер команды' && user.teamStatus != "Принят") { %>
                 <p class="team-desctiption">
                   <% if(user.teamStatus === "Команды нет") { %>
@@ -38,9 +38,9 @@
                     
                 </p>
                
+            <% } %> 
+                <p class="team-desctiption"> <span style="color:black;"> Команда: <a href="<%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>/teams-page<% } else { %>/team-details/<%=user.teamId%><% } %>" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;"><%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>Создать команду<% } else { %> Смотреть команду <% } %></a></span> </p>
             <% } %>
-             
-            <p class="team-desctiption"> <span style="color:black;"> Команда: <a href="<%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>/teams-page<% } else { %>/team-details/<%=user.teamId%><% } %>" style=" color: #f2d243; text-shadow: 1px 1px 3px #000000;"><%if(user.roleId === 5 && !user.teamId || user.teamId === 0) { %>Создать команду<% } else { %> Смотреть команду <% } %></a></span> </p>
             </div>
         </div>
   

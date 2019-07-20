@@ -19,6 +19,7 @@ router.get('/admins-list', isAuth, userControll.getAdmins);
 // router.get('/invitation', isAuth, userControll.getInvitation);
 router.get('/mentors', isAuth, userControll.getMentors);
 
+router.post('/mentor-accept', isAuth, userControll.postMentorAccept);
 router.post('/mentor-canclereq', isAuth, userControll.postMentorCancleRequest);
 router.post('/delete-mentreq', isAuth, userControll.postMentorDeleteRequest);
 router.post('/decline-all', isAuth, userControll.declineAllRequests);

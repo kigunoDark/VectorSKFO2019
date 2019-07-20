@@ -23,8 +23,20 @@
                 <td><%= user.secondname%></td>
                 <td><%= user.position %> </td>
                 <td><%= user.city %> </td>
-                <td class="center"> <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button> </td>
-                <td class="center"> <button type="submint"  class="teamAdd">  <i class=" fas fa-user-minus"></i> </button> </td>
+                <td class="center"> 
+                    <form action="/mentor-accept", method="POST">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <input type="hidden" name="userId" value="<%= user.id %>">
+                        <button type="submint"  class="teamAdd">  <i class=" fas fa-user-plus"></i> </button> 
+                    </form>
+                </td>
+                <td class="center">
+                    <form action="/mentor-canclereq" method="POST">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <input type="hidden" name="userId" value="<%= user.id %>">
+                        <button type="submint"  class="teamAdd">  <i class=" fas fa-user-minus"></i> </button>
+                    </form> 
+                 </td>
                 <td class="center"> 
                     <form action="/delete-mentreq" method="POST">
                         <input type="hidden" name="_csrf" value="<%=csrfToken%>">

@@ -950,8 +950,7 @@ exports.postInviteTeammate = (req, res) => {
 
 exports.getMentors = (req, res) =>{
         const name = req.session.user.name;
-        const roleId = req.session.user.roleID;
-        
+        const roleId = req.session.user.roleId;
         User.findAll({
             where:{
                 teamStatus:"Стать ментором"
@@ -996,7 +995,18 @@ exports.postMentorDeleteRequest = (req,res) => {
 }
 
 exports.postMentorCancleRequest = (req, res) => {
-    const userId = req.session.user.id;
+    let userId ;
+    let roleId = req.session.user.roleId;
+    console.log("This is your " + roleId);
+    if(roleId === 1)
+    {
+        userId = req.body.userId;
+        
+    } else {
+        userId = req.session.user.id;
+    }
+
+    console.log("THIS IS YOU USERID: " +  userId);
     User.findByPk(userId)
     .then(user => {
         user.update({
@@ -1010,11 +1020,46 @@ exports.postMentorCancleRequest = (req, res) => {
                 userId: userId
             }
         })
-        res.redirect('/profile');
+    if(roleId === 1)  
+        {
+            
+            res.redirect('/mentors')
+            } else  {
+                res.redirect('/profile');
+            }
     })
     .catch(err => {
         console.log(err);
     })
+}
+
+exports.postMentorAccept = (req,res) => {
+    const mentorId = req.body.userId;
+    User.findByPk(mentorId)
+    .then(mentor => {
+        mentor.update({
+            s_type: "Заявка принята",
+            teamStatus: "Ментор",
+            roleId: 3
+        })
+      
+        return mentor.save();
+        
+    })
+    .then(()=>{
+        Status.destroy({
+            where: {
+                userId: mentorId
+            }
+        })
+        .then(()=>{
+            res.redirect('/mentors');
+        })
+    })
+    .catch(err => {
+        console.log(err);
+    })
+    
 }
 // INVENTATION OF USER - THIS IS IN A PROCESS
 // exports.getInvitation = (req, res) => {
